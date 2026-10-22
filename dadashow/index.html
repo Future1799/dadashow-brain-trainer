@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DADASHOW GROUP - Memory Brain Trainer</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Background Music -->
+  <audio id="bgMusic" src="assets/bg-music.m4a" loop preload="auto"></audio>
+
+  <!-- Background Wallpaper with Neon Overlay -->
+  <div class="bg-wallpaper"></div>
+  <div class="bg-overlay"></div>
+
+  <!-- Main Game Container -->
+  <div class="game-wrapper">
+    <!-- Header / HUD -->
+    <header class="hud-header">
+      <div class="hud-left">
+        <button id="btnLevelList" class="hud-btn neon-purple">
+          <span class="btn-icon">🎮</span>
+          <span class="btn-text">Level <span id="currentLevelNumber">1</span>/20</span>
+        </button>
+        <div class="lives-box" title="Qalan Səhv Şansı">
+          <span class="lives-label">CAN:</span>
+          <div id="livesContainer" class="lives-hearts">
+            <span class="heart active">❤️</span>
+            <span class="heart active">❤️</span>
+            <span class="heart active">❤️</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hud-center">
+        <div class="brand-title">
+          <span class="neon-text-blue">DADASHOW</span>
+          <span class="neon-text-pink">GROUP</span>
+          <span class="sub-brand">BRAIN TRAINER</span>
+        </div>
+      </div>
+
+      <div class="hud-right">
+        <div class="points-badge" title="Mövcud Xallar">
+          <span class="coin-icon">💎</span>
+          <span id="playerPoints">0</span> <small>XP</small>
+        </div>
+
+        <div class="timer-badge" id="timerBadge">
+          <span class="timer-icon">⏱️</span>
+          <span id="gameTimer">03:00</span>
+        </div>
+
+        <div class="audio-controls">
+          <button id="btnToggleMusic" class="hud-icon-btn" title="Musiqi: Aç/Bağla">
+            <span id="musicIcon">🎵</span>
+          </button>
+          <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.25" title="Səs Səviyyəsi">
+        </div>
+      </div>
+    </header>
+
+    <!-- Memorization Banner (Countdown) -->
+    <div id="memoBanner" class="memo-banner">
+      <div class="memo-content">
+        <span class="memo-pulse">👀</span>
+        <div class="memo-text-block">
+          <h2 id="memoTitle">DİQQƏTLƏ YADDA SAXLA!</h2>
+          <p>Kartlar <span id="memoTimer" class="memo-count">10</span> saniyəyə arxası üstə çevriləcək</p>
+        </div>
+        <button id="btnSkipMemo" class="skip-memo-btn">Hazıram! ⚡</button>
+      </div>
+      <div class="memo-progress-bar">
+        <div id="memoProgressFill" class="memo-progress-fill"></div>
+      </div>
+    </div>
+
+    <!-- Active Target Objective Bar -->
+    <section class="target-bar">
+      <div class="target-info">
+        <span class="target-flag">🎯 HƏDƏF:</span>
+        <span id="targetPromptText" class="target-text">Kartları yadda saxlayın...</span>
+      </div>
+      <div class="target-stats">
+        <span class="target-progress">Tapılan: <b id="matchedCount">0</b> / <b id="totalPairsCount">0</b></span>
+      </div>
+    </section>
+
+    <!-- Cards Grid Board -->
+    <main class="board-area">
+      <div id="cardsGrid" class="cards-grid">
+        <!-- Dynamic Cards Injected via JS -->
+      </div>
+    </main>
+
+    <!-- Bottom Shop / Hints HUD -->
+    <footer class="hud-footer">
+      <div class="hints-panel">
+        <span class="panel-label">💡 GÜCLƏNDİRİCİLƏR (XP İSTİFADƏ ET):</span>
+        <div class="hint-buttons-group">
+          <button id="btnHintSingle" class="hint-btn neon-blue" title="Hədəf olan 1 kartı 2 saniyə göstər">
+            <span class="hint-icon">🔍</span>
+            <div class="hint-desc">
+              <span class="hint-name">1 Kartı Göstər</span>
+              <span class="hint-cost">60 XP</span>
+            </div>
+          </button>
+
+          <button id="btnHintPeekAll" class="hint-btn neon-pink" title="Bütün kartları 2 saniyəlik çevirib göstər">
+            <span class="hint-icon">👁️</span>
+            <div class="hint-desc">
+              <span class="hint-name">Hamısına Bax (2s)</span>
+              <span class="hint-cost">150 XP</span>
+            </div>
+          </button>
+
+          <button id="btnHintTime" class="hint-btn neon-green" title="Vaxta 30 saniyə əlavə et">
+            <span class="hint-icon">⏳</span>
+            <div class="hint-desc">
+              <span class="hint-name">+30 Saniyə</span>
+              <span class="hint-cost">80 XP</span>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <div class="game-action-buttons">
+        <button id="btnRestartLevel" class="action-btn restart-btn" title="Kartların yerini spontan dəyişərək yenidən başlat">
+          🔄 Yenidən Başlat
+        </button>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Level Completed Modal -->
+  <div id="modalWin" class="modal-overlay">
+    <div class="modal-card win-card">
+      <div class="modal-glow"></div>
+      <div class="modal-header">
+        <span class="modal-trophy">🏆</span>
+        <h2 class="neon-text-blue">MƏRHƏLƏ TAMAMLANDI!</h2>
+        <p class="modal-subtitle">Əla yaddaş! Beyin gücün pik həddədir.</p>
+      </div>
+      <div class="modal-stats">
+        <div class="stat-box">
+          <span class="stat-val" id="winScoreEarned">+250</span>
+          <span class="stat-lbl">Qazanılan XP</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-val" id="winTimeLeft">01:45</span>
+          <span class="stat-lbl">Qalan Vaxt</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-val" id="winAccuracy">100%</span>
+          <span class="stat-lbl">Dəqiqlik</span>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button id="btnReplayLevel" class="modal-btn outline-btn">Təkrar Oyna</button>
+        <button id="btnNextLevel" class="modal-btn primary-btn neon-pulse-btn">Növbəti Level 🚀</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Over Modal -->
+  <div id="modalGameOver" class="modal-overlay">
+    <div class="modal-card fail-card">
+      <div class="modal-glow fail-glow"></div>
+      <div class="modal-header">
+        <span class="modal-trophy">💥</span>
+        <h2 class="neon-text-pink">MƏRHƏLƏ BİTDİ!</h2>
+        <p id="gameOverReason" class="modal-subtitle">Vaxtınız bitdi və ya çox səhv etdiniz.</p>
+      </div>
+      <p class="restart-note">Narahat olmayın! Kartların yeri yenidən qarışdırılacaq və sizə yeni 10 saniyə yadda saxlama fürsəti veriləcək.</p>
+      <div class="modal-actions">
+        <button id="btnTryAgain" class="modal-btn primary-btn danger-glow">Yenidən Cəhd Et 🔄</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Level Select Modal -->
+  <div id="modalLevelSelect" class="modal-overlay">
+    <div class="modal-card levels-dialog">
+      <div class="levels-header">
+        <h3 class="neon-text-blue">MƏRHƏLƏ SEÇİMİ (1 - 20)</h3>
+        <button id="btnCloseLevels" class="close-x">&times;</button>
+      </div>
+      <div id="levelsGridContainer" class="levels-picker-grid">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Toast -->
+  <div id="toastNotification" class="toast-box"></div>
+
+  <script src="game.js"></script>
+</body>
+</html>

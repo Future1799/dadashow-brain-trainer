@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "name": "dadashow-memory-game",
+  "routes": [
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+}
